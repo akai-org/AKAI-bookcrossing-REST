@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="202204091336" author="Szczepaniak-M">
+        <comment>Initialize tables</comment>
+        <createTable tableName="application_user">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="full_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="resource">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="resource_type" type="VARCHAR(7)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="author" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(15500)"/>
+        </createTable>
+
+        <createTable tableName="book">
+            <column name="id" type="INT">
+                <constraints primaryKey="true" foreignKeyName="fk_resource_book" references="resource(id)"/>
+            </column>
+            <column name="available" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="current_owner_id" type="INT">
+                <constraints nullable="false" foreignKeyName="fk_book_current_owner_user" references="application_user(id)"/>
+            </column>
+            <column name="original_owner_id" type="INT">
+                <constraints nullable="false" foreignKeyName="fk_book_original_owner_user" references="application_user(id)"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="ebook">
+            <column name="id" type="INT">
+                <constraints primaryKey="true" foreignKeyName="fk_resource_ebook" references="resource(id)"/>
+            </column>
+            <column name="google_id" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="url" type="VARCHAR(2083)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="opinion">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="resource_id" type="INT">
+                <constraints nullable="false" foreignKeyName="fk_resource_opinion" references="resource(id)"/>
+            </column>
+            <column name="author_id" type="INT">
+                <constraints nullable="false" foreignKeyName="fk_opinion_author_user" references="application_user(id)"/>
+            </column>
+            <column name="rating" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="content" type="VARCHAR(15500)"/>
+        </createTable>
+
+        <createTable tableName="tag">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="resource_tag">
+            <column name="resource_id" type="INT">
+                <constraints primaryKey="true" foreignKeyName="fk_resource_tag" references="resource(id)"/>
+            </column>
+            <column name="tag_id" type="INT">
+                <constraints primaryKey="true" foreignKeyName="fk_tag_resource" references="tag(id)"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="book_rent_request">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="book_id" type="INT">
+                <constraints nullable="false" foreignKeyName="fk_rent_request_book" references="book(id)"/>
+            </column>
+            <column name="requester_id" type="INT">
+                <constraints nullable="false" foreignKeyName="fk_rent_request_user" references="application_user(id)"/>
+            </column>
+        </createTable>
+
+
+    </changeSet>
+</databaseChangeLog>
